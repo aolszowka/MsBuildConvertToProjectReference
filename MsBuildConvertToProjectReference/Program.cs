@@ -94,8 +94,6 @@ namespace MsBuildConvertToProjectReference
             }
 
             Environment.Exit(errorCode);
-
-
         }
 
         private static bool IsValidDirectoryArgument(string directoryArgument)
