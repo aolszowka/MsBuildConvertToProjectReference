@@ -194,7 +194,7 @@ namespace MsBuildConvertToProjectReference
                     msbuildNS + "ProjectReference",
                     new XAttribute("Include", PathUtilities.GetRelativePath(projFile, reference.Path)),
                     new XElement(msbuildNS + "Project", reference.ProjectGuid),
-                    new XElement(msbuildNS + "Name", reference.AssemblyName));
+                    new XElement(msbuildNS + "Name", Path.GetFileNameWithoutExtension(reference.Path)));
 
             return projectReference;
         }
