@@ -73,12 +73,12 @@ namespace MsBuildConvertToProjectReference
         /// <returns>All projects that this tool supports.</returns>
         internal static IEnumerable<string> GetProjectsInDirectory(string targetDirectory)
         {
-            HashSet<string> supportedFileExtensions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { ".csproj", ".vbproj", ".DblNet.synproj" };
+            string[] supportedFileExtensions = new string[] { ".csproj", ".vbproj", "dblnet.synproj" };
 
             return
                 Directory
                 .EnumerateFiles(targetDirectory, "*proj", SearchOption.AllDirectories)
-                .Where(currentFile => supportedFileExtensions.Contains(Path.GetExtension(currentFile)));
+                .Where(currentFile => supportedFileExtensions.Any(supportedFileExtension => currentFile.EndsWith(supportedFileExtension, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         /// <summary>
