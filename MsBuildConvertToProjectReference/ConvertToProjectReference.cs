@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ProjectInformation.cs" company="Ace Olszowka">
-//  Copyright (c) Ace Olszowka 2018. All rights reserved.
+//  Copyright (c) Ace Olszowka 2018-2019. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -219,7 +219,7 @@ namespace MsBuildConvertToProjectReference
 
                 if (!lookupDictionary.TryAdd(pi.AssemblyName.ToLowerInvariant(), pi))
                 {
-                    string exceptionMessage = $"Name was duplicated (case-insensitive)! `{pi.AssemblyName}`";
+                    string exceptionMessage = $"Name was duplicated (case-insensitive)! `{pi.AssemblyName}`. First Instance: `{pi.Path}` Second Instance: `{lookupDictionary[pi.AssemblyName.ToLowerInvariant()].Path}`";
                     throw new InvalidOperationException(exceptionMessage);
                 }
             });
