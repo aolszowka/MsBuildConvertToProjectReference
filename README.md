@@ -26,40 +26,36 @@ Therefore this tool can be used to quickly address the above scenario as well as
 
 ## Usage
 ```text
-MsBuildConvertToProjectReference
+Usage: MsBuildConvertToProjectReference C:\DirectoryWithProjects -ld=C:\lookupDir [-ld=C:\lookupDir2] [-validate]
+
 Scans given directory for MSBuild Style Projects and Converts their References
 to ProjectReferences if the Project was found in the Lookup Directories.
 
-Invalid Command/Arguments. Valid commands are:
+When ran with --validate it performs the above operation as
+described but instead the return code represents the number of projects that
+would be modified.
 
-MsBuildConvertToProjectReference [targetDirectory] [lookupDirectory]+
-    [MODIFIES] Spins through targetDirectory and all subdirectories for
-    MSBuild Project Format Files and attempts to convert any Reference Elements
-    to ProjectReference if the Project can be found (via AssemblyName) in one
-    of the MSBuild Projects in the lookupDirectories. ALWAYS Returns 0.
-MsBuildConvertToProjectReference validatedirectory [targetDirectory] [lookupDirectory]+
-    [READS] Spins through targetDirectory and all subdirectories for MSBuild
-    Project Format Files and attempts to convert any Reference Elements to
-    ProjectReference if the Project can be found (via AssemblyName) in one of
-    the MSBuild Projects in the lookupDirectories. Returns the number of invalid
-    projects.
+Arguments:
 
-In all instances:
-* You can specify multiple lookupDirectory.
-* Any project that is invalid is written to the console.
+               <>            A Directory to scan for Project Files
+      --validate             Indicates if this tool should only be run in
+                               validation mode
+      --lookupdirectory, --ld=VALUE
+                             One or more directories to use to find projects
+  -?, -h, --help             Show this message and exit
 ```
 
 ### Example
 ```text
-MsBuildConvertToProjectReference R:\Trunk\Dotnet R:\Trunk\Dotnet R:\Trunk\ExternalLibs R:\Trunk\LegacyLibs
+MsBuildConvertToProjectReference R:\Trunk\Dotnet --lookupDirectory=R:\Trunk\Dotnet -ld=R:\Trunk\ExternalLibs --lookupdirectory=R:\Trunk\LegacyLibs
 ```
 
 Will attempt to convert all `<Reference>` Elements in any MSBuild Project File Found in `R:\Trunk\Dotnet` to `<ProjectReference>` Elements if the Reference is found (via `AssemblyName`) in `R:\Trunk\Dotnet`, `R:\Trunk\ExternalLibs`, or `R:\Trunk\LegacyLibs`
 
 ## Assumptions/Gotchas
-This tool assumes that the `AssemblyName` is unique throughout all given `lookupDirectory` and that any assembly with the same name is the one you want to add reference to.
+This tool assumes that the `AssemblyName` is unique throughout all given `--lookupdirectory` arguments and that any assembly with the same name is the one you want to add reference to.
 
-You are allowed to have multiple `lookupDirectory` arguments, and the tool will happily set relative paths for `<ProjectReference>` to any location you want. However you need to be careful that this is what you really want (consider if you had a Feature Branch or accidently had the code on another drive).
+You are allowed to have multiple `--lookupdirectory` arguments (you can also mix and match the shorthand `-ld=`), and the tool will happily set relative paths for `<ProjectReference>` to any location you want. However you need to be careful that this is what you really want (consider if you had a Feature Branch or accidently had the code on another drive).
 
 This tool does not account for differences in `AssemblyVersion` Currently (See Hacking#AssemblyVersion).
 
