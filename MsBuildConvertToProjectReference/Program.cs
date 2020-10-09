@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="Program.cs" company="Ace Olszowka">
-//  Copyright (c) Ace Olszowka 2018. All rights reserved.
+//  Copyright (c) Ace Olszowka 2018-2020. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -10,90 +10,105 @@ namespace MsBuildConvertToProjectReference
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+
     using MsBuildConvertToProjectReference.Properties;
 
-    class Program
+    using NDesk.Options;
+
+    public class Program
     {
         static void Main(string[] args)
         {
-            int errorCode = 0;
+            MSBCTPROptions options = ParseForOptions(args);
 
-            if (args.Any())
+            if (!options.LookupDirectories.Any())
             {
-                string command = args.First().ToLowerInvariant();
+                Environment.ExitCode = -1;
+                Console.WriteLine(Strings.NotEnoughDirectoryArguments);
+            }
+            else
+            {
+                // First Ensure that all Directories are Valid
+                if (IsValidDirectoryArgument(options.TargetDirectory))
+                {
+                    bool allDirectoriesValid = true;
 
-                if (command.Equals("-?") || command.Equals("/?") || command.Equals("-help") || command.Equals("/help"))
-                {
-                    errorCode = ShowUsage();
-                }
-                else if (command.Equals("validatedirectory"))
-                {
-                    if (args.Length < 3)
+                    // Validate the Remaining Arguments
+                    foreach (string directoryArgument in options.LookupDirectories)
                     {
-                        errorCode = 1;
-                        Console.WriteLine(StringResources.NotEnoughDirectoryArguments);
+                        allDirectoriesValid = allDirectoriesValid && IsValidDirectoryArgument(directoryArgument);
+                    }
+
+                    if (allDirectoriesValid)
+                    {
+                        bool saveChanges = options.Validate == false;
+
+                        Environment.ExitCode = PrintToConsole(options.TargetDirectory, options.LookupDirectories, saveChanges);
+
+                        if (saveChanges)
+                        {
+                            // Always Return Zero
+                            Environment.ExitCode = 0;
+                        }
                     }
                     else
                     {
-                        bool allDirectoriesValid = true;
-
-                        // Validate the Remaining Arguments
-                        foreach (string directoryArgument in args.Skip(1))
-                        {
-                            allDirectoriesValid = allDirectoriesValid && IsValidDirectoryArgument(directoryArgument);
-                        }
-
-                        if (allDirectoriesValid)
-                        {
-                            // The Error Code should be the number of projects that would be modified
-                            errorCode = PrintToConsole(args.Skip(1), false);
-                        }
-                        else
-                        {
-                            errorCode = 9009;
-                            Console.WriteLine(StringResources.OneOrMoreInvalidDirectories);
-                        }
+                        Environment.ExitCode = -1;
+                        Console.WriteLine(Strings.OneOrMoreInvalidDirectories);
                     }
                 }
                 else
                 {
-                    if (args.Length < 2)
-                    {
-                        errorCode = 1;
-                        Console.WriteLine(StringResources.NotEnoughDirectoryArguments);
-                    }
-                    else
-                    {
-                        bool allDirectoriesValid = true;
-
-                        // Validate the Remaining Arguments
-                        foreach (string directoryArgument in args)
-                        {
-                            allDirectoriesValid = allDirectoriesValid && IsValidDirectoryArgument(directoryArgument);
-                        }
-
-                        if (allDirectoriesValid)
-                        {
-                            PrintToConsole(args, true);
-
-                            // If we're modifying we ALWAYS Return Error Code of Zero
-                            errorCode = 0;
-                        }
-                        else
-                        {
-                            errorCode = 9009;
-                            Console.WriteLine(StringResources.OneOrMoreInvalidDirectories);
-                        }
-                    }
+                    Environment.ExitCode = -1;
+                    Console.WriteLine(Strings.OneOrMoreInvalidDirectories);
                 }
             }
-            else
+        }
+
+        public static MSBCTPROptions ParseForOptions(string[] args)
+        {
+            List<string> lookupDirectories = new List<string>();
+
+            MSBCTPROptions options = new MSBCTPROptions();
+
+            OptionSet p = new OptionSet()
             {
-                // This was a bad command
-                errorCode = ShowUsage();
+                { "<>", Strings.TargetArgumentDescription, v => options.TargetDirectory = v },
+                { "validate", Strings.ValidateDescription, v => options.Validate = v != null },
+                { "lookupdirectory=|ld=", Strings.LookupDirectoryArgumentDescription, v => lookupDirectories.Add(v) },
+                { "?|h|help", Strings.HelpDescription, v => options.ShowHelp = v != null },
+            };
+
+            try
+            {
+                p.Parse(args);
+                options.LookupDirectories = lookupDirectories;
+            }
+            catch (OptionException)
+            {
+                Console.WriteLine(Strings.ShortUsageMessage);
+                Console.WriteLine($"Try `{Strings.ProgramName} --help` for more information.");
+                Environment.Exit(21);
             }
 
-            Environment.Exit(errorCode);
+            if (options.ShowHelp || string.IsNullOrEmpty(options.TargetDirectory))
+            {
+                int exitCode = ShowUsage(p);
+                Environment.Exit(exitCode);
+            }
+
+            return options;
+        }
+
+        private static int ShowUsage(OptionSet p)
+        {
+            Console.WriteLine(Strings.ShortUsageMessage);
+            Console.WriteLine();
+            Console.WriteLine(Strings.LongDescription);
+            Console.WriteLine();
+            Console.WriteLine($"               <>            {Strings.TargetArgumentDescription}");
+            p.WriteOptionDescriptions(Console.Out);
+            return 21;
         }
 
         private static bool IsValidDirectoryArgument(string directoryArgument)
@@ -102,24 +117,18 @@ namespace MsBuildConvertToProjectReference
 
             if (!Directory.Exists(directoryArgument))
             {
-                Console.WriteLine(StringResources.InvalidDirectoryArgument, directoryArgument);
+                Console.WriteLine(Strings.InvalidDirectoryArgument, directoryArgument);
                 isValidDirectory = false;
             }
 
             return isValidDirectory;
         }
 
-        private static int ShowUsage()
-        {
-            Console.WriteLine(StringResources.HelpTextMessage);
-            return 21;
-        }
-
-        static int PrintToConsole(IEnumerable<string> directoryArguments, bool saveChanges)
+        static int PrintToConsole(string targetDirectory, IEnumerable<string> lookupDirectories, bool saveChanges)
         {
             int convertedProjectCount = 0;
 
-            IEnumerable<string> fixedProjects = ConvertToProjectReference.ForDirectory(directoryArguments.First(), directoryArguments.Skip(1), saveChanges);
+            IEnumerable<string> fixedProjects = ConvertToProjectReference.ForDirectory(targetDirectory, lookupDirectories, saveChanges);
 
             foreach (string fixedProject in fixedProjects)
             {
