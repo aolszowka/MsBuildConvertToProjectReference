@@ -9,46 +9,19 @@ namespace MsBuildConvertToProjectReference
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     using MsBuildConvertToProjectReference.Properties;
 
     using NDesk.Options;
 
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
+            MSBCTPROptions options = ParseForOptions(args);
 
-            string targetDirectory = string.Empty;
-            IDictionary<string, string> lookupDirectories = new Dictionary<string, string>();
-            bool validateOnly = false;
-            bool showHelp = false;
-
-            OptionSet p = new OptionSet()
-            {
-                { "<>", Strings.TargetArgumentDescription, v => targetDirectory = v },
-                { "validate", Strings.ValidateDescription, v => validateOnly = v != null },
-                { "lookupdirectory={:}{/}|ld={:}{/}", Strings.LookupDirectoryArgumentDescription, (n,v) => lookupDirectories.Add(n, v) },
-                { "?|h|help", Strings.HelpDescription, v => showHelp = v != null },
-            };
-
-            try
-            {
-                p.Parse(args);
-            }
-            catch (OptionException)
-            {
-                Console.WriteLine(Strings.ShortUsageMessage);
-                Console.WriteLine($"Try `{Strings.ProgramName} --help` for more information.");
-                Environment.ExitCode = 21;
-                return;
-            }
-
-            if (showHelp || string.IsNullOrEmpty(targetDirectory))
-            {
-                Environment.ExitCode = ShowUsage(p);
-            }
-            else if (lookupDirectories.Count == 0)
+            if (!options.LookupDirectories.Any())
             {
                 Environment.ExitCode = -1;
                 Console.WriteLine(Strings.NotEnoughDirectoryArguments);
@@ -56,21 +29,21 @@ namespace MsBuildConvertToProjectReference
             else
             {
                 // First Ensure that all Directories are Valid
-                if (IsValidDirectoryArgument(targetDirectory))
+                if (IsValidDirectoryArgument(options.TargetDirectory))
                 {
                     bool allDirectoriesValid = true;
 
                     // Validate the Remaining Arguments
-                    foreach (string directoryArgument in lookupDirectories.Values)
+                    foreach (string directoryArgument in options.LookupDirectories)
                     {
                         allDirectoriesValid = allDirectoriesValid && IsValidDirectoryArgument(directoryArgument);
                     }
 
                     if (allDirectoriesValid)
                     {
-                        bool saveChanges = validateOnly == false;
+                        bool saveChanges = options.Validate == false;
 
-                        Environment.ExitCode = PrintToConsole(targetDirectory, lookupDirectories.Values, saveChanges);
+                        Environment.ExitCode = PrintToConsole(options.TargetDirectory, options.LookupDirectories, saveChanges);
 
                         if (saveChanges)
                         {
@@ -90,6 +63,41 @@ namespace MsBuildConvertToProjectReference
                     Console.WriteLine(Strings.OneOrMoreInvalidDirectories);
                 }
             }
+        }
+
+        public static MSBCTPROptions ParseForOptions(string[] args)
+        {
+            List<string> lookupDirectories = new List<string>();
+
+            MSBCTPROptions options = new MSBCTPROptions();
+
+            OptionSet p = new OptionSet()
+            {
+                { "<>", Strings.TargetArgumentDescription, v => options.TargetDirectory = v },
+                { "validate", Strings.ValidateDescription, v => options.Validate = v != null },
+                { "lookupdirectory=|ld=", Strings.LookupDirectoryArgumentDescription, v => lookupDirectories.Add(v) },
+                { "?|h|help", Strings.HelpDescription, v => options.ShowHelp = v != null },
+            };
+
+            try
+            {
+                p.Parse(args);
+                options.LookupDirectories = lookupDirectories;
+            }
+            catch (OptionException)
+            {
+                Console.WriteLine(Strings.ShortUsageMessage);
+                Console.WriteLine($"Try `{Strings.ProgramName} --help` for more information.");
+                Environment.Exit(21);
+            }
+
+            if (options.ShowHelp || string.IsNullOrEmpty(options.TargetDirectory))
+            {
+                int exitCode = ShowUsage(p);
+                Environment.Exit(exitCode);
+            }
+
+            return options;
         }
 
         private static int ShowUsage(OptionSet p)

@@ -70,24 +70,6 @@ namespace MsBuildConvertToProjectReference.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MsBuildConvertToProjectReference
-        ///Scans given directory for MSBuild Style Projects and Converts their References
-        ///to ProjectReferences if the Project was found in the Lookup Directories.
-        ///
-        ///Invalid Command/Arguments. Valid commands are:
-        ///
-        ///MsBuildConvertToProjectReference [targetDirectory] [lookupDirectory]+
-        ///    [MODIFIES] Spins through targetDirectory and all subdirectories for
-        ///    MSBuild Project Format Files and attempts to convert any Reference Elements
-        ///    to ProjectReference if the Project can be f [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HelpTextMessage {
-            get {
-                return ResourceManager.GetString("HelpTextMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The provided directory `{0}` is invalid..
         /// </summary>
         internal static string InvalidDirectoryArgument {
@@ -122,7 +104,7 @@ namespace MsBuildConvertToProjectReference.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must provide a directory to scan as well as the lookup directories..
+        ///   Looks up a localized string similar to You must provide at least one lookup directory (-ld=/-lookupdirectory=).
         /// </summary>
         internal static string NotEnoughDirectoryArguments {
             get {

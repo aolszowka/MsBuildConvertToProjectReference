@@ -120,29 +120,6 @@
   <data name="HelpDescription" xml:space="preserve">
     <value>Show this message and exit</value>
   </data>
-  <data name="HelpTextMessage" xml:space="preserve">
-    <value>MsBuildConvertToProjectReference
-Scans given directory for MSBuild Style Projects and Converts their References
-to ProjectReferences if the Project was found in the Lookup Directories.
-
-Invalid Command/Arguments. Valid commands are:
-
-MsBuildConvertToProjectReference [targetDirectory] [lookupDirectory]+
-    [MODIFIES] Spins through targetDirectory and all subdirectories for
-    MSBuild Project Format Files and attempts to convert any Reference Elements
-    to ProjectReference if the Project can be found (via AssemblyName) in one
-    of the MSBuild Projects in the lookupDirectories. ALWAYS Returns 0.
-MsBuildConvertToProjectReference validatedirectory [targetDirectory] [lookupDirectory]+
-    [READS] Spins through targetDirectory and all subdirectories for MSBuild
-    Project Format Files and attempts to convert any Reference Elements to
-    ProjectReference if the Project can be found (via AssemblyName) in one of
-    the MSBuild Projects in the lookupDirectories. Returns the number of invalid
-    projects.
-
-In all instances:
-* You can specify multiple lookupDirectory.
-* Any project that is invalid is written to the console.</value>
-  </data>
   <data name="InvalidDirectoryArgument" xml:space="preserve">
     <value>The provided directory `{0}` is invalid.</value>
   </data>
@@ -160,7 +137,7 @@ Arguments:</value>
     <value>One or more directories to use to find projects</value>
   </data>
   <data name="NotEnoughDirectoryArguments" xml:space="preserve">
-    <value>You must provide a directory to scan as well as the lookup directories.</value>
+    <value>You must provide at least one lookup directory (-ld=/-lookupdirectory=)</value>
   </data>
   <data name="OneOrMoreInvalidDirectories" xml:space="preserve">
     <value>One or more of the directories specified was invalid (see above).</value>

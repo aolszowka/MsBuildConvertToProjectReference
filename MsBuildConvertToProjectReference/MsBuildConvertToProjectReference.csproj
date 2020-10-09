@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConvertToProjectReference.cs" />
+    <Compile Include="MSBCTPROptions.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PathUtilities.cs" />
     <Compile Include="Program.cs" />
