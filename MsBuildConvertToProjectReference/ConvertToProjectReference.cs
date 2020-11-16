@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="ProjectInformation.cs" company="Ace Olszowka">
-//  Copyright (c) Ace Olszowka 2018-2019. All rights reserved.
+//  Copyright (c) Ace Olszowka 2018-2020. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -192,7 +192,7 @@ namespace MsBuildConvertToProjectReference
             XElement projectReference =
                 new XElement(
                     msbuildNS + "ProjectReference",
-                    new XAttribute("Include", PathUtilities.GetRelativePath(projFile, reference.Path)),
+                    new XAttribute("Include", Path.GetRelativePath(reference.Path, projFile).Replace(Path.DirectorySeparatorChar, '\\')),
                     new XElement(msbuildNS + "Project", reference.ProjectGuid),
                     new XElement(msbuildNS + "Name", Path.GetFileNameWithoutExtension(reference.Path)));
 

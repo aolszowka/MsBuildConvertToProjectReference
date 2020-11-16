@@ -6,7 +6,6 @@
 
 namespace MsBuildConvertToProjectReference
 {
-    using System;
     using System.Collections.Generic;
 
     public class MSBCTPROptions
@@ -27,7 +26,7 @@ namespace MsBuildConvertToProjectReference
         public bool Validate { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating wheather or not to show help.
+        /// Gets or sets a value indicating whether or not to show help.
         /// </summary>
         public bool ShowHelp { get; set; }
     }

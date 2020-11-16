@@ -9,7 +9,7 @@ namespace MsBuildConvertToProjectReference.Tests
     using NUnit.Framework;
 
     [TestFixture]
-    public class OptionsParsing
+    public class OptionsParsingTests
     {
         [Test]
         public void TestOptionsParse()

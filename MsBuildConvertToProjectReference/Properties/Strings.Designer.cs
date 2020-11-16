@@ -122,16 +122,7 @@ namespace MsBuildConvertToProjectReference.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MsBuildConvertToProjectReference.
-        /// </summary>
-        internal static string ProgramName {
-            get {
-                return ResourceManager.GetString("ProgramName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Usage: MsBuildConvertToProjectReference C:\DirectoryWithProjects -ld=C:\lookupDir [-ld=C:\lookupDir2] [-validate].
+        ///   Looks up a localized string similar to Usage: C:\DirectoryWithProjects -ld=C:\lookupDir [-ld=C:\lookupDir2] [-validate].
         /// </summary>
         internal static string ShortUsageMessage {
             get {
