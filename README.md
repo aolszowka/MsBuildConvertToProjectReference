@@ -1,4 +1,6 @@
 # MsBuildConvertToProjectReference
+![CI - Master](https://github.com/aolszowka/MsBuildConvertToProjectReference/workflows/CI/badge.svg?branch=master)
+
 Utility Program to Convert MsBuild Reference (Assembly Reference) Tags to ProjectReference Tags
 
 ## Background
@@ -25,8 +27,15 @@ Furthermore the "Microsoft Solution" does not address "code rot" from unsuspecti
 Therefore this tool can be used to quickly address the above scenario as well as be put on a Tattler Process/Commit Hook to prevent "code rot".
 
 ## Usage
+There are now two ways to run this tool:
+
+1. (Compiled Executable) Invoke the tool via `MsBuildConvertToProjectReference` and pass the arguments.
+2. (Dotnet Tool) Install this tool using the following command `dotnet tool install MsBuildConvertToProjectReference` (assuming that you have the nuget package in your feed) then invoke it via `dotnet project-converttoprojectreference`
+
+In both cases the flags to the tooling are identical:
+
 ```text
-Usage: MsBuildConvertToProjectReference C:\DirectoryWithProjects -ld=C:\lookupDir [-ld=C:\lookupDir2] [-validate]
+Usage: C:\DirectoryWithProjects -ld=C:\lookupDir [-ld=C:\lookupDir2] [-validate]
 
 Scans given directory for MSBuild Style Projects and Converts their References
 to ProjectReferences if the Project was found in the Lookup Directories.
@@ -47,7 +56,7 @@ Arguments:
 
 ### Example
 ```text
-MsBuildConvertToProjectReference R:\Trunk\Dotnet --lookupDirectory=R:\Trunk\Dotnet -ld=R:\Trunk\ExternalLibs --lookupdirectory=R:\Trunk\LegacyLibs
+dotnet project-converttoprojectreference R:\Trunk\Dotnet --lookupDirectory=R:\Trunk\Dotnet -ld=R:\Trunk\ExternalLibs --lookupdirectory=R:\Trunk\LegacyLibs
 ```
 
 Will attempt to convert all `<Reference>` Elements in any MSBuild Project File Found in `R:\Trunk\Dotnet` to `<ProjectReference>` Elements if the Reference is found (via `AssemblyName`) in `R:\Trunk\Dotnet`, `R:\Trunk\ExternalLibs`, or `R:\Trunk\LegacyLibs`
