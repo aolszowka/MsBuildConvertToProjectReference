@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsBuildConvertToProjectReference", "MsBuildConvertToProjectReference\MsBuildConvertToProjectReference.csproj", "{7A934349-D905-426D-B3F4-70CF1FC368BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsBuildConvertToProjectReference", "MsBuildConvertToProjectReference\MsBuildConvertToProjectReference.csproj", "{7A934349-D905-426D-B3F4-70CF1FC368BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsBuildConvertToProjectReference.Tests", "MsBuildConvertToProjectReference.Tests\MsBuildConvertToProjectReference.Tests.csproj", "{763E38B4-BEF8-4251-89E8-1F9F06AA7027}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MsBuildConvertToProjectReference.Tests", "MsBuildConvertToProjectReference.Tests\MsBuildConvertToProjectReference.Tests.csproj", "{763E38B4-BEF8-4251-89E8-1F9F06AA7027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

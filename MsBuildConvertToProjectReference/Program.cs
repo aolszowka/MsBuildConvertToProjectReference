@@ -87,8 +87,8 @@ namespace MsBuildConvertToProjectReference
             catch (OptionException)
             {
                 Console.WriteLine(Strings.ShortUsageMessage);
-                Console.WriteLine($"Try `{Strings.ProgramName} --help` for more information.");
-                Environment.Exit(21);
+                Console.WriteLine($"Try `--help` for more information.");
+                Environment.Exit(160);
             }
 
             if (options.ShowHelp || string.IsNullOrEmpty(options.TargetDirectory))
@@ -108,7 +108,7 @@ namespace MsBuildConvertToProjectReference
             Console.WriteLine();
             Console.WriteLine($"               <>            {Strings.TargetArgumentDescription}");
             p.WriteOptionDescriptions(Console.Out);
-            return 21;
+            return 160;
         }
 
         private static bool IsValidDirectoryArgument(string directoryArgument)
