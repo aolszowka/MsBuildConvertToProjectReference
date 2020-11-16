@@ -6,7 +6,6 @@
 
 namespace MsBuildConvertToProjectReference
 {
-    using System;
     using System.Collections.Generic;
 
     public class MSBCTPROptions
